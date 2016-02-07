@@ -38,7 +38,7 @@ class GraphL
 		void displayGraph();		// display the result of depth first search
 		
 		void enumerateSubgraph(GraphNode[MAXNODES], int); //enumerateSubgraph
-		void extendSubgraph(GraphNode[MAXNODES], GraphNode[MAXNODES], GraphNode)//extendSubgraph
+		void extendSubgraph(GraphNode[MAXNODES], GraphNode[MAXNODES], GraphNode);//extendSubgraph
 	
 	private:
 		struct EdgeNode;		 // forward reference for the compiler
