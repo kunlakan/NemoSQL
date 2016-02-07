@@ -1,3 +1,20 @@
+//------------------------------------------ graphl.h ---------------------------------------------
+// Programmer Name: Jeen Cherdchusilp & Ngoc Luu 
+// Creation Date: 10/26/2015 // Date of Last Modification: 02/06/2016
+// -------------------------------------------------------------------------------------------------
+// Purpose - a brief statement of the program's function 
+// This project aims to implement depth first search algorithm
+// ------------------------------------------------------------------------------------------------- 
+// Notes on specifications, special algorithms, and assumptions. 
+// -------------------------------------------------------------------------------------------------
+// GraphL class: 
+// This class aims to implement the depth first search algorithm.
+//
+// Implementation and assumptions:
+// -- A graph can have at most 100 nodes. (This assumption might change to the scale of the project)
+// -- This program assumes the input data has correctly formatted, valid data.
+// -- This program displays the result to demonstrate the algorithm works properly.
+//--------------------------------------------------------------------------------------------------
 #include "graphl.h" // header file
 
 //------------------------------------------ GraphL ------------------------------------------------
