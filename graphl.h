@@ -24,6 +24,7 @@
 #include <iomanip> 	// for output formatting
 #include "limits.h" // for INT_MAX
 #include "nodedata.h" // for data type
+#include <vector>
 
 class GraphL
 {
