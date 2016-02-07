@@ -233,16 +233,20 @@ void enumerateSubgraph(int k) // k is the size of subgraphs
 	//loop to generate V_extension and call extendSubgraph
 	for(int i = 0; i < MAXNODES; i++)
 	{
-		GraphNode V_extension[MAXNODES]; // array of extension nodes
-		
-		// generate V_extension with u in N({v}}: u > v
-		// for each node, find adjacent nodes and add to V_extension
-		// condition: adjacent nodes to be added should not be v in the previous V_extension's
-		for(int i = 0; i < MAXNODES; i++)
-		{
-			
-		}
-		extendSubgraph(nodeArray, V_extension,v); // call extendSubgraph
+        // PS. using maxnodes for the loop limit is not very efficient.
+        // because there could be some index of the ajc list that has no element
+        // in it.
+        
+        // It is easier to use either use the stack or queue of int.
+        queue<int> Vextension;
+        getExtension(i);
+        
+        //GraphNode V_extension[MAXNODES]; // array of extension nodes
+
+        vector<int> Vsubgraph;
+        Vsubgraph[0] = i;
+        
+		extendSubgraph(Vsubgraph, Vextension, v, k); // call extendSubgraph
 	}
 }//end of enumeratedSubgraph
 
@@ -254,3 +258,28 @@ void enumerateSubgraph(int k) // k is the size of subgraphs
 //		V'_extension <-- V_extension U {u in N_exclude(w, V_subgraph: u > v}
 //		call EXTENDSUBGRAPH(V_subgraph U {w}, V'_extension,v)
 //--------------------------------------------------------------------------------------------------
+void Graph::extendSubgraph(vector<int> Vsubgraph, queue<int> Vextension, int v, const int &k)
+{
+    if(Vsubgraph.size() == k)
+    {
+        // print Vsubgraph (have no decided how to display the subgraph.
+        return;
+    }
+    
+    while( Vextension.size() != 0 )
+    {
+        int u = Vextension.front();
+        Vextension.pop();
+        
+        Vsubgraph.push_back(u);
+        
+        getExtension(u, Vextension);
+        extendSubgraph(Vsubgraph, Vextension, v, k);
+    }
+}
+
+
+void Graph::getExtension(const int &v, queue<int> Vextension){
+    for(EdgeNode *w = vertices[v].edgeHead; w != NULL; w = w->nextEdge)
+        Vextension.push(w->adjVertex);
+}
