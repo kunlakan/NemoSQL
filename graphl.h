@@ -7,7 +7,7 @@
 // ------------------------------------------------------------------------------------------------- 
 // Notes on specifications, special algorithms, and assumptions. 
 // -------------------------------------------------------------------------------------------------
-// GraphM class: 
+// GraphL class: 
 // This class aims to implement the depth first search algorithm.
 //
 // Implementation and assumptions:
@@ -25,6 +25,7 @@
 #include "limits.h" // for INT_MAX
 #include "nodedata.h" // for data type
 #include <vector>
+#include <queue>
 
 class GraphL
 {
@@ -38,8 +39,10 @@ class GraphL
 		void depthFirstSearch();	// perform pre-order traversal in a graph
 		void displayGraph();		// display the result of depth first search
 		
-		void enumerateSubgraph(GraphNode[MAXNODES], int); //enumerateSubgraph
-		void extendSubgraph(GraphNode[MAXNODES], GraphNode[MAXNODES], GraphNode);//extendSubgraph
+		//struct GraphNode;
+		void enumerateSubgraph(int); //enumerateSubgraph
+		void extendSubgraph(vector<int>, queue<int>, int, const int&); //extendSubgraph
+		void getExtension(const int&, queue<int>);
 	
 	private:
 		struct EdgeNode;		 // forward reference for the compiler
