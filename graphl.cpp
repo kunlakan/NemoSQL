@@ -1,21 +1,3 @@
-//------------------------------------------ graphl.cpp ---------------------------------------------
-// Programmer Name: Ngoc Luu
-// Creation Date: 11/07/2015 // Date of Last Modification: 02/06/2016
-// -------------------------------------------------------------------------------------------------
-// Purpose - a brief statement of the program's function 
-// This project aims to create 
-// ------------------------------------------------------------------------------------------------- 
-// Notes on specifications, special algorithms, and assumptions. 
-// -------------------------------------------------------------------------------------------------
-// GraphM class: 
-// This class aims to implement the depth first search algorithm.
-//
-// Implementation and assumptions:
-// -- A graph can have at most 100 nodes. (This assumption might change to the scale of the project)
-// -- This program assumes the input data has correctly formatted, valid data.
-// -- This program displays the result to demonstrate the algorithm works properly.
-//--------------------------------------------------------------------------------------------------
-
 #include "graphl.h" // header file
 
 //------------------------------------------ GraphL ------------------------------------------------
@@ -224,11 +206,11 @@ void GraphL::displayGraph()
 // Algorithm: ENUMERATESUBGRAPH(G,k) (ESU)
 // Input: A graph G = (V,E) and an integer 1 <= k <= |V|
 // Output: All size-k subgraphs in G
-// for each vertext v in V do
+// for each vertex v in V do
 // 		V_extension <-- {u in N({v}}: u > v}
 //		call EXTENDSUBGRAPH({v}, V_extension, v)
 //--------------------------------------------------------------------------------------------------
-void enumerateSubgraph(int k) // k is the size of subgraphs
+void GraphL::enumerateSubgraph(int k) // k is the size of subgraphs
 {
 	//loop to generate V_extension and call extendSubgraph
 	for(int i = 0; i < MAXNODES; i++)
@@ -239,14 +221,14 @@ void enumerateSubgraph(int k) // k is the size of subgraphs
         
         // It is easier to use either use the stack or queue of int.
         queue<int> Vextension;
-        getExtension(i);
+        getExtension(i, Vextension);
         
         //GraphNode V_extension[MAXNODES]; // array of extension nodes
 
         vector<int> Vsubgraph;
         Vsubgraph[0] = i;
         
-		extendSubgraph(Vsubgraph, Vextension, v, k); // call extendSubgraph
+		extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
 	}
 }//end of enumeratedSubgraph
 
@@ -258,11 +240,14 @@ void enumerateSubgraph(int k) // k is the size of subgraphs
 //		V'_extension <-- V_extension U {u in N_exclude(w, V_subgraph: u > v}
 //		call EXTENDSUBGRAPH(V_subgraph U {w}, V'_extension,v)
 //--------------------------------------------------------------------------------------------------
-void Graph::extendSubgraph(vector<int> Vsubgraph, queue<int> Vextension, int v, const int &k)
+void GraphL::extendSubgraph(vector<int> Vsubgraph, queue<int> Vextension, int v, const int &k)
 {
     if(Vsubgraph.size() == k)
     {
         // print Vsubgraph (have no decided how to display the subgraph.
+		/*int i = 0;
+		while(!Vsubgraph.size() == 0)
+			cout << Vsubgraph[i++] << " ";*/
         return;
     }
     
@@ -279,7 +264,7 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, queue<int> Vextension, int v, 
 }
 
 
-void Graph::getExtension(const int &v, queue<int> Vextension){
-    for(EdgeNode *w = vertices[v].edgeHead; w != NULL; w = w->nextEdge)
-        Vextension.push(w->adjVertex);
+void GraphL::getExtension(const int &v, queue<int> Vextension){
+    for(EdgeNode *w = nodeArray[v].edgeHead; w != NULL; w = w->nextEdge)
+        Vextension.push(w->adjGraphNode);
 }
