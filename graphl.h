@@ -1,5 +1,5 @@
 //------------------------------------------ graphl.h ---------------------------------------------
-// Programmer Name: Ngoc Luu 
+// Programmer Name: Jeen Cherdchusilp & Ngoc Luu 
 // Creation Date: 10/26/2015 // Date of Last Modification: 02/06/2016
 // -------------------------------------------------------------------------------------------------
 // Purpose - a brief statement of the program's function 
