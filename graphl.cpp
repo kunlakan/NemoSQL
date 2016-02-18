@@ -245,7 +245,7 @@ void GraphL::enumerateSubgraph(int k) // k is the size of subgraphs
 			//cout << Vextension[j] << " ";
 		
 		//U in N{v} and u > v
-		//extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
+		extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
 	}
 }//end of enumeratedSubgraph
 
@@ -275,16 +275,15 @@ void GraphL::extendSubgraph(vector<int> Vsubgraph, vector<int> Vextension, int v
     
     while(Vextension.size() != 0 )
     {
-		//cout << "while loop statement " << endl;
-        int u = Vextension.back();
+        int w = Vextension.back();	// remove an arbitrary w from Vextension
 		//cout << u << " ";
 		
-		Vextension.pop_back();
-		Vsubgraph.push_back(u);
+		Vextension.pop_back();		// Vextension = Vextension - w
+		Vsubgraph.push_back(w);		// add w to Vsubgraph
 		
-		if(u > v)
-			getExtension(u, Vextension); // might need an extra list here to keep track of the adj nodes
-		extendSubgraph(Vsubgraph, Vextension, v, k);
+		vector<int> Vextension2;	// create Vextension2
+		getExtension2(w, Vsubgraph, Vextension, Vextension2); 						// call getExtension2
+		extendSubgraph(exclusiveNeighbor(Vsubgraph, Vextension), Vextension2, v, k);// call extendSubgraph
     }
 }
 
@@ -297,18 +296,69 @@ void GraphL::getExtension(const int &v, vector<int>& Vextension)
 			{
 				Vextension.push_back(w->adjGraphNode);
 				cout << Vextension.back() << " ";
+			}
+	}
+	cout << endl;
+}
+
+void GraphL::getExtension2(const int &v, vector<int>& Vsubgraph, vector<int>& Vextension,
+							vector<int>& Vextension2)
+{
+	cout << "starting node " << v << " " << endl;
+	for(EdgeNode *u = nodeArray[v].edgeHead; u != NULL; u = u->nextEdge)
+	{
+			if(u->adjGraphNode > v)// && exclusiveNeighbor(u->adjGraphNode, Vextension, Vsubgraph))
+			{
+				Vextension2.push_back(u->adjGraphNode);
+				cout << Vextension2.back() << " ";
 				//Vsubgraph.pop_back();
 			}
 	}
 	cout << endl;
 }
 
-bool GraphL::exclusiveNeighbor(int vertex, vector<int>& Vsubgraph)
+vector<int> GraphL::exclusiveNeighbor(vector<int>& Vsubgraph, vector<int>& Vextension)
 {
+	/* bool flag1 = true;
+	bool flag2 = true;
 	
+	for(int i = 0; i <= Vextension.size(); i++)
+		if(u == Vextension[i])
+			flag1 = false;
+		
+	for(int i = 0; i <= Vsubgraph.size(); i++)
+		if(u == Vsubgraph[i])
+			flag1 = false;
+		
+	return flag1 && flag2; */
+	
+	vector<int> Vunion;
+	cout << "Vunion size " << Vunion.size() << endl;
+	
+	for(int i = 0; i <= Vsubgraph.size(); i++){
+		if(Vsubgraph[i] != 0 && !isDuplicate(Vsubgraph[i], Vunion))
+			cout << "start" << endl;
+			Vunion.push_back(Vsubgraph[i]);
+			cout << "end" << endl;
+	}
+	
+	for(int i = 0; i <= Vextension.size(); i++)
+		if(Vextension[i] != 0 && !isDuplicate(Vextension[i], Vunion))
+			Vunion.push_back(Vextension[i]);
+	
+	cout << "Vunion" << endl;
+	for(int i = 0; i <= Vunion.size(); i++)
+		cout << Vunion[i] << " ";
+	cout << endl;
+	return Vunion;
 }
-// for each V in Graph G
-// 	add v to Vextension
-//	add v to a queue or stack to keep track of already added vertices
-//	next level:
-//	
+
+bool GraphL::isDuplicate(int target, vector<int>& vertices)
+{
+	cout << "duplicate" << endl;
+	for(int i = 0; i <= vertices.size(); i++)
+		if(target == vertices[i])
+			return true;
+	cout << "duplicate end" << endl;
+	return false;
+}
