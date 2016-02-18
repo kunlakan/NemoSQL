@@ -70,7 +70,8 @@ void GraphL::buildGraph(ifstream& inFile)
 	
 	// read the size
 	inFile >> size;
-	inFile.get();
+	cout << "read size " << size << endl;
+	//inFile.get();
 	
 	// a loop to initialize the node information
 	if(size > 0)
@@ -87,6 +88,7 @@ void GraphL::buildGraph(ifstream& inFile)
 		for(;;)
 		{
 			inFile >> source >> adjNode;
+			cout << source << " " << adjNode << endl;
 			
 			if(source == 0 || adjNode == 0) // end of a graph
 				break;	
@@ -214,57 +216,37 @@ void GraphL::enumerateSubgraph(int k) // k is the size of subgraphs
 {
 	cout << "Initial Vsubgraph " << endl;
 	//loop to generate V_extension and call extendSubgraph
-	vector<int> Vsubgraph;
-	for(int i = 1; i <= size; i++)
-	{
+	//vector<int> Vsubgraph;
+	//for(int i = 1; i <= size; i++)
+	//{
         // PS. using maxnodes for the loop limit is not very efficient.
         // because there could be some index of the ajc list that has no element
         // in it.
         
         // It is easier to use either use the stack or queue of int.
-        Vsubgraph.push_back(i); // push the vertex to Vsubgraph
-	}
-	for(int j = 0; j < Vsubgraph.size(); j++)
-			cout << Vsubgraph[j] << " ";
-		
-	cout << endl;
-	cout << endl;
-	
-	for(int i = 1; i <= Vsubgraph.size(); i++)
-	{
-		vector<int> Vextension;
-        getExtension(i, Vextension, Vsubgraph);
-		
-		// for(int j = 0; j < Vextension.size(); j++)
-			// cout << Vextension[j] << " ";
-		
-		//U in N{v} and u > v
-		extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
-	}
-	
-	/*for(int i = 1; i <= size; i++)
-	{
-        // PS. using maxnodes for the loop limit is not very efficient.
-        // because there could be some index of the ajc list that has no element
-        // in it.
-        
-        // It is easier to use either use the stack or queue of int.
-		vector<int> Vsubgraph;
-        Vsubgraph.push_back(i); // push the vertex to Vsubgraph
-		
-		//for(int j = 0; j < Vsubgraph.size(); j++)
+        //Vsubgraph.push_back(i); // push the vertex to Vsubgraph
+	//}
+	//for(int j = 0; j < Vsubgraph.size(); j++)
 			//cout << Vsubgraph[j] << " ";
 		
-        //queue<int> Vextension;
+	//cout << endl;
+	//cout << endl;
+	cout << "size " << size << endl;
+	for(int i = 1; i <= size; i++)
+	{
+		vector<int> Vsubgraph;
+		Vsubgraph.push_back(i);
+		//for(int j = 0; j < Vsubgraph.size(); j++)
+			//cout << Vsubgraph[j] << " " << endl;
 		vector<int> Vextension;
-        getExtension(i, Vextension, Vsubgraph);
+        getExtension(i, Vextension);
 		
-		// for(int j = 0; j < Vextension.size(); j++)
-			// cout << Vextension[j] << " ";
+		//for(int j = 0; j < Vextension.size(); j++)
+			//cout << Vextension[j] << " ";
 		
 		//U in N{v} and u > v
-		extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
-	}*/
+		//extendSubgraph(Vsubgraph, Vextension, i, k); // call extendSubgraph
+	}
 }//end of enumeratedSubgraph
 
 //------------------------------- extendSubgraph ---------------------------------------------------
@@ -278,8 +260,7 @@ void GraphL::enumerateSubgraph(int k) // k is the size of subgraphs
 //void GraphL::extendSubgraph(vector<int> Vsubgraph, queue<int> Vextension, int v, const int &k)
 void GraphL::extendSubgraph(vector<int> Vsubgraph, vector<int> Vextension, int v, const int &k)
 {
-	//cout << "size " << Vsubgraph.size() << endl; //trace Vsubgraph size
-    if(Vsubgraph.size() == k)
+	if(Vsubgraph.size() == k)
     {
 		//cout << "if statement " << endl;
         // print Vsubgraph (have no decided how to display the subgraph.
@@ -302,53 +283,32 @@ void GraphL::extendSubgraph(vector<int> Vsubgraph, vector<int> Vextension, int v
 		Vsubgraph.push_back(u);
 		
 		if(u > v)
-			getExtension(u, Vextension, Vsubgraph); // might need an extra list here to keep track of the adj nodes
+			getExtension(u, Vextension); // might need an extra list here to keep track of the adj nodes
 		extendSubgraph(Vsubgraph, Vextension, v, k);
     }
 }
 
-void GraphL::getExtension(const int &v, vector<int>& Vextension, vector<int>& Vsubgraph)
+void GraphL::getExtension(const int &v, vector<int>& Vextension)
 {
-		for(EdgeNode *w = nodeArray[v].edgeHead; w != NULL; w = w->nextEdge)
-		{
-				//cout << " v " << v << " neighbor " << w->adjGraphNode << endl;
-				//bool isExclusive = exclusiveNeighbor(w->adjGraphNode, Vsubgraph);
-				//cout << isExclusive << endl;
-				if(Vextension.size() == 0){
-					//if(isExclusive){
-						Vextension.push_back(w->adjGraphNode);
-						Vsubgraph.pop_back();
-					}
-				else
-				{
-					// only add vertices with two properties: u > v &
-					// u is adjacent to the newly added w
-					for(int j = 0; j < Vextension.size(); j++)
-						//if(isExclusive && w->adjGraphNode != Vextension[j] && w->adjGraphNode > v)
-						if(w->adjGraphNode != Vextension[j] && w->adjGraphNode > v)
-						{
-								Vextension.push_back(w->adjGraphNode);
-								Vsubgraph.pop_back();
-								break;								
-						}
-					//break;						
-				}
-		}
-	/*cout << "Vsubgraph in getExtension" << endl;
-		for(int i = 0; i < Vsubgraph.size(); i++)
-			cout << Vsubgraph[i] << " ";
-	cout << "Vextension in getExtension" << endl;
-	for(int i = 0; i < Vextension.size(); i++)
-			cout << Vextension[i] << " ";
-		
-		cout << endl;*/
-		
+	cout << "starting node " << v << " " << endl;
+	for(EdgeNode *w = nodeArray[v].edgeHead; w != NULL; w = w->nextEdge)
+	{
+			if(w->adjGraphNode > v)
+			{
+				Vextension.push_back(w->adjGraphNode);
+				cout << Vextension.back() << " ";
+				//Vsubgraph.pop_back();
+			}
+	}
+	cout << endl;
 }
 
 bool GraphL::exclusiveNeighbor(int vertex, vector<int>& Vsubgraph)
 {
-	for(int i = 0; i <= Vsubgraph.size(); i++)
-		if(vertex == Vsubgraph[i])
-			return false;
-	return true;				
+	
 }
+// for each V in Graph G
+// 	add v to Vextension
+//	add v to a queue or stack to keep track of already added vertices
+//	next level:
+//	
