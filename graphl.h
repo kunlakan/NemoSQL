@@ -38,8 +38,12 @@ class GraphL
 		void depthFirstSearch();	// perform pre-order traversal in a graph
 		void displayGraph();		// display the result of depth first search
 		
-		void enumerateSubgraph(GraphNode[MAXNODES], int); //enumerateSubgraph
-		void extendSubgraph(GraphNode[MAXNODES], GraphNode[MAXNODES], GraphNode);//extendSubgraph
+        void enumerateSubgraph(GraphNode[MAXNODES], int); //enumerateSubgraph
+        void extendSubgraph(GraphNode[MAXNODES], GraphNode[MAXNODES], GraphNode);//extendSubgraph
+		void getExtension(const int &v, vector<int>& Vextension);
+		void getExtension2(const int &v, vector<int>& Vsubgraph, vector<int>& Vextension, vector<int>& Vextension2);
+		vector<int> exclusiveNeighbor(vector<int>& Vsubgraph, vector<int>& Vextension);
+		bool isDuplicate(int target, vector<int>& vertices);
 	
 	private:
 		struct EdgeNode;		 // forward reference for the compiler
