@@ -112,6 +112,10 @@ public:
     //                   description
     void display(const int &source, const int &destination) const;
     
+    //--------------------------- enumerateSubgraph ----------------------------
+    // Enumerate size-k subgraphs of the original graph
+    // Preconditions: The graph should have already been built or exists
+    // Postcondition: The list of subgraphs are displayed
     void enumerateSubgraph(const int &k);
     
     
@@ -199,8 +203,8 @@ private:
     //------------------------- PRIVATE: removeAllEdge -------------------------
     // Removes all EdgeNode recursively
     // Preconditions: currentEdge points to either NULL or an EdgeNode
-    // Postconditions: currentEdge->nextEdge, and currentEdge will be deallocated
-    //                 and set to NULL
+    // Postconditions: currentEdge->nextEdge, and currentEdge will be
+    //                 deallocated and set to NULL
     void removeAllEdge(EdgeNode *&current);
 
     
@@ -235,8 +239,23 @@ private:
     //                 range. Otherwise, false is returned
     bool areInRange(const int &source , const int &destination) const;
     
+    //------------------------ PRIVATE: extendSubgraph -------------------------
+    // Recursively looking size-k subgraphs of the graph.
+    // Precondition: The graph should have already been built or exists
+    // Postcondition: The list of subgraphs are displayed
     void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, const int &k);
+    
+    //-------------------------- PRIVATE: getExtension -------------------------
+    // Create a list contain all neighbors of v
+    // Precondition: None
+    // Postcondition: list of v's neighbors is returned
     list<int> getExtension(const int &v, const list<int> &Vextension) const;
+    
+    //-------------------------- PRIVATE: isDuplicate --------------------------
+    // Checks if target already exists in the Vextension
+    // Preconditions: None
+    // Postcondition: - true is return if target is contained in Vextension
+    //                - false is return if target is not contained in Vextension
     bool isDuplicate(const int &target, const list<int>& Vextension) const;
 };
 

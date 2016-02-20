@@ -291,21 +291,11 @@ void Graph::display(const int &source, const int &destination) const
     }
 }
 
-//----------------------------- PRIVATE: areInRange ----------------------------
-// Checks if source and destination are in the range of 0 to size
-// Preconditions: None
-// Postconditions: true is returned if the source and destination are in the
-//                 range. Otherwise, false is returned
-bool Graph::areInRange(const int &source , const int &destination) const
-{
-    bool sourceInRange = (0 <= source) && (source < size);
-    bool destInRange = (0 <= destination) && (destination < size);
-    
-    return sourceInRange && destInRange;
-}
 
-
-
+//------------------------------ enumerateSubgraph -----------------------------
+// Enumerate size-k subgraphs of the original graph
+// Preconditions: The graph should have already been built or exists
+// Postcondition: The list of subgraphs are displayed
 void Graph::enumerateSubgraph(const int &k)
 {
     for(int i = 0; i <= size; i++)
@@ -318,6 +308,10 @@ void Graph::enumerateSubgraph(const int &k)
     }
 }
 
+//--------------------------- PRIVATE: extendSubgraph --------------------------
+// Recursively looking size-k subgraphs of the graph.
+// Precondition: The graph should have already been built or exists
+// Postcondition: The list of subgraphs are displayed
 void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, const int &k)
 {
     if(Vsubgraph.size() == k)
@@ -342,7 +336,12 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
     }
 }
 
-list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const{
+//--------------------------- PRIVATE: getExtension ----------------------------
+// Create a list contain all neighbors of v
+// Precondition: None
+// Postcondition: list of v's neighbors is returned
+list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
+{
     list<int> newExtension = Vextension;
     
     for(EdgeNode *w = vertices[v].edgeHead; w != NULL; w = w->nextEdge)
@@ -353,10 +352,15 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const{
                 newExtension.push_back(w->adjVertex);
         }
     }
-
+    
     return newExtension;
 }
 
+//---------------------------- PRIVATE: isDuplicate ----------------------------
+// Checks if target already exists in the Vextension
+// Preconditions: None
+// Postcondition: - true is return if target is contained in Vextension
+//                - false is return if target is not contained in Vextension
 bool Graph::isDuplicate(const int &target, const list<int>& Vextension) const
 {
     for(list<int>::const_iterator it = Vextension.begin(); it != Vextension.end(); it++)
@@ -367,3 +371,16 @@ bool Graph::isDuplicate(const int &target, const list<int>& Vextension) const
     return false;
 }
 
+
+//----------------------------- PRIVATE: areInRange ----------------------------
+// Checks if source and destination are in the range of 0 to size
+// Preconditions: None
+// Postconditions: true is returned if the source and destination are in the
+//                 range. Otherwise, false is returned
+bool Graph::areInRange(const int &source , const int &destination) const
+{
+    bool sourceInRange = (0 <= source) && (source < size);
+    bool destInRange = (0 <= destination) && (destination < size);
+    
+    return sourceInRange && destInRange;
+}
