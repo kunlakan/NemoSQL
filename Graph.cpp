@@ -130,23 +130,24 @@ void Graph::removeAllEdge(EdgeNode *&currentEdge)
 // Preconditions:  infile has been successfully opened and the file contains
 //                 properly formated data (according to the program specs)
 // Postconditions: A graph is read from infile and stored in the object
-void Graph::buildGraph(ifstream& infile)
+void Graph::buildGraph(ifstream& infile, int s)
 {
-    infile >> size;                          // data member stores array size
+	size = s;
+	//infile >> size;                          // data member stores array size
     
     if (infile.eof())
         return;
-    infile.ignore();                         // throw away '\n' go to next line
-    
-    char tempString[MAX_CHAR_LENGTH];
-
-    for (int v = 0; v < size; v++)
-    {
-        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
-  
-		vertices[v].data = new GraphData(tempString);
-    }
-    
+    //infile.ignore();                         // throw away '\n' go to next line
+	
+//    char tempString[MAX_CHAR_LENGTH];
+//
+//    for (int v = 0; v < size; v++)
+//    {
+//        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
+//  
+//		vertices[v].data = new GraphData(tempString);
+//    }
+	
     int src = 1, dest = 1;
     for (;;) {
         infile >> src >> dest;
@@ -154,6 +155,25 @@ void Graph::buildGraph(ifstream& infile)
             break;
         insertEdge(src, dest);
     }
+	
+}
+
+int Graph::getSize(ifstream& infile){
+	int highest = 0;
+	int num1 = 1; int num2 = 1;
+	if(infile.eof())	return -1;
+	
+	for (;;) {
+		infile >> num1 >> num2;
+		if (num1 == 0 || infile.eof()) {
+			break;
+		}
+		if (num2 > num1) {
+			highest = (num2 > highest ? num2 : highest);
+		}else if(num1 > num2)
+			highest = (num1 > highest ? num1 : highest);
+	}
+	return highest;
 }
 
 //--------------------------------- insertEdge ---------------------------------
