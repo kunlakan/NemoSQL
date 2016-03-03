@@ -130,24 +130,23 @@ void Graph::removeAllEdge(EdgeNode *&currentEdge)
 // Preconditions:  infile has been successfully opened and the file contains
 //                 properly formated data (according to the program specs)
 // Postconditions: A graph is read from infile and stored in the object
-void Graph::buildGraph(ifstream& infile, int s)
+void Graph::buildGraph(ifstream& infile)
 {
-	size = s;
-	//infile >> size;                          // data member stores array size
+    infile >> size;                          // data member stores array size
     
     if (infile.eof())
         return;
-    //infile.ignore();                         // throw away '\n' go to next line
-	
-//    char tempString[MAX_CHAR_LENGTH];
-//
-//    for (int v = 0; v < size; v++)
-//    {
-//        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
-//  
-//		vertices[v].data = new GraphData(tempString);
-//    }
-	
+    infile.ignore();                         // throw away '\n' go to next line
+    
+    char tempString[MAX_CHAR_LENGTH];
+
+    for (int v = 0; v < size; v++)
+    {
+        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
+  
+		vertices[v].data = new GraphData(tempString);
+    }
+    
     int src = 1, dest = 1;
     for (;;) {
         infile >> src >> dest;
@@ -155,25 +154,6 @@ void Graph::buildGraph(ifstream& infile, int s)
             break;
         insertEdge(src, dest);
     }
-	
-}
-
-int Graph::getSize(ifstream& infile){
-	int highest = 0;
-	int num1 = 1; int num2 = 1;
-	if(infile.eof())	return -1;
-	
-	for (;;) {
-		infile >> num1 >> num2;
-		if (num1 == 0 || infile.eof()) {
-			break;
-		}
-		if (num2 > num1) {
-			highest = (num2 > highest ? num2 : highest);
-		}else if(num1 > num2)
-			highest = (num1 > highest ? num1 : highest);
-	}
-	return highest;
 }
 
 //--------------------------------- insertEdge ---------------------------------
@@ -324,7 +304,23 @@ void Graph::enumerateSubgraph(const int &k)
         Vsubgraph.push_back(i);
         list<int> Vextension = getExtension(i, Vextension);
         
-        extendSubgraph(Vsubgraph, Vextension, i, k);
+        extendSubgraph(Vsubgraph, Vextension, i, k); //call extendSubgraph
+    }
+}
+
+//------------------------------ enumerateSubgraph -----------------------------
+// Enumerate size-k subgraphs of the original graph
+// Preconditions: The graph should have already been built or exists
+// Postcondition: The list of subgraphs are displayed
+void Graph::enumerateSubgraph2(const int &k, ofstream& outfile)
+{
+    for(int i = 0; i <= size; i++)
+    {
+        vector<int> Vsubgraph;
+        Vsubgraph.push_back(i);
+        list<int> Vextension = getExtension(i, Vextension);
+        
+        extendSubgraph2(Vsubgraph, Vextension, i, k, outfile); //call extendSubgraph
     }
 }
 
@@ -344,15 +340,44 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
     
     while(Vextension.size() != 0 && Vsubgraph.size() < k)
     {
-        int w = Vextension.front();
+        int w = Vextension.front();//remove an arbitrary node w from Vsubgraph
         
         Vextension.pop_front();
-        Vsubgraph.push_back(w);
+        Vsubgraph.push_back(w);	   //add w to Vsubgraph
         
-        list<int> Vextension2 = getExtension(w, Vextension);
-        extendSubgraph(Vsubgraph, Vextension2, v, k);
+        list<int> Vextension2 = getExtension(w, Vextension); //Vextension <- Vextention union ({w}, Vsubgraph)
+        extendSubgraph(Vsubgraph, Vextension2, v, k);	     //call extendSubgraph
         
-        Vsubgraph.pop_back();
+        Vsubgraph.pop_back();		//remove a node from Vsubgraph
+    }
+}
+
+//--------------------------- PRIVATE: extendSubgraph2 --------------------------
+// Recursively looking size-k subgraphs of the graph.
+// Precondition: The graph should have already been built or exists
+// Postcondition: The list of subgraphs are written to the output.txt file
+void Graph::extendSubgraph2(vector<int> Vsubgraph, list<int> &Vextension, int v, const int &k,
+							ofstream& outfile)
+{	
+    if(Vsubgraph.size() == k)
+    {
+        for(int i = 0; i < Vsubgraph.size(); i++)
+            outfile << Vsubgraph[i] + 1 << " ";
+        outfile <<"\n";
+        return;
+    }
+    
+    while(Vextension.size() != 0 && Vsubgraph.size() < k)
+    {
+        int w = Vextension.front();//remove an arbitrary node w from Vsubgraph
+        
+        Vextension.pop_front();
+        Vsubgraph.push_back(w);	   //add w to Vsubgraph
+        
+        list<int> Vextension2 = getExtension(w, Vextension); //Vextension <- Vextention union ({w}, Vsubgraph)
+        extendSubgraph2(Vsubgraph, Vextension2, v, k, outfile);	     //call extendSubgraph
+        
+        Vsubgraph.pop_back();		//remove a node from Vsubgraph
     }
 }
 
@@ -362,14 +387,15 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
 // Postcondition: list of v's neighbors is returned
 list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
 {
-    list<int> newExtension = Vextension;
+    list<int> newExtension = Vextension; //newExtension <-- Vextension
     
+	//loop to add new nodes to Vextension/Vextension2
     for(EdgeNode *w = vertices[v].edgeHead; w != NULL; w = w->nextEdge)
     {
-        if(w->adjVertex > v)
+        if(w->adjVertex > v)// w > v
         {
-            if(!isDuplicate(w->adjVertex, newExtension))
-                newExtension.push_back(w->adjVertex);
+            if(!isDuplicate(w->adjVertex, newExtension)) //exclusive neighbor
+                newExtension.push_back(w->adjVertex);//add w to newExtension
         }
     }
     
@@ -383,12 +409,13 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
 //                - false is return if target is not contained in Vextension
 bool Graph::isDuplicate(const int &target, const list<int>& Vextension) const
 {
+	//loop to check if a target node is duplicate in Vextension
     for(list<int>::const_iterator it = Vextension.begin(); it != Vextension.end(); it++)
     {
-        if(target == *it)
+        if(target == *it)//duplicate
             return true;
     }
-    return false;
+    return false;//exclusive
 }
 
 
@@ -399,8 +426,8 @@ bool Graph::isDuplicate(const int &target, const list<int>& Vextension) const
 //                 range. Otherwise, false is returned
 bool Graph::areInRange(const int &source , const int &destination) const
 {
-    bool sourceInRange = (0 <= source) && (source < size);
-    bool destInRange = (0 <= destination) && (destination < size);
+    bool sourceInRange = (0 <= source) && (source < size); //source is in range
+    bool destInRange = (0 <= destination) && (destination < size); //destination is in range
     
     return sourceInRange && destInRange;
 }
