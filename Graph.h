@@ -73,9 +73,9 @@ public:
     // Preconditions:  infile has been successfully opened and the file contains
     //                 properly formated data (according to the program specs)
     // Postconditions: A graph is read from infile and stored in the object
-    void buildGraph(ifstream &infile);
+    void buildGraph(ifstream &infile, int s);
     
-    
+    int getSize(ifstream& infile);
     //------------------------------- insertEdge -------------------------------
     // Insert an EdgeNode into the graph
     // Preconditions: - source and destination should be within the input range
@@ -179,7 +179,10 @@ private:
     int size;                               // number of vertices in the graph
     VertexNode vertices[MAX_VERTICES];      // adjacency list
     
-    
+	
+	
+	
+	
     //------------------------ PRIVATE: copyAllVertices ------------------------
     // Copies every VertexNode element and all of its EdgeNode of othersVertices
     // over to verticies sequentially vertices will have its ownership over all
