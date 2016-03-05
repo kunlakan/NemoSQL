@@ -24,27 +24,24 @@ using namespace std;
 // Postconditions:  - The graph of the input will be generated
 //                  - The k-size subgraphs with be generated as called
 int main() {
-    ifstream infile1("/Users/NewOwner/Documents/NetworkMotifs/input.txt");
+    ifstream infile1("/Users/shokorakis/Desktop/Homework_3/Homework_3/input.txt");
     if (!infile1) {
         cerr << "File could not be opened." << endl;
         return 1;
     }
-	Graph G;
-	int s = G.getSize(infile1);	// read once to get the size of the graph
-	infile1.clear();	// clear the buffer
-	infile1.seekg(0);	// reset the reading position
+
     for(;;){
-        G.buildGraph(infile1, s);
+        Graph G;
+        G.buildGraph(infile1);
         if (infile1.eof())
             break;
         
         G.enumerateSubgraph(3);
-        G.enumerateSubgraph(4);
-        G.enumerateSubgraph(5);
+        //G.enumerateSubgraph(4);
+        //G.enumerateSubgraph(5);
         
         cout << endl;
     }
-	infile1.close();
     
     return 0;
 }

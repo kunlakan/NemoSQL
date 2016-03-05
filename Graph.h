@@ -73,9 +73,9 @@ public:
     // Preconditions:  infile has been successfully opened and the file contains
     //                 properly formated data (according to the program specs)
     // Postconditions: A graph is read from infile and stored in the object
-    void buildGraph(ifstream &infile, int s);
+    void buildGraph(ifstream &infile);
     
-    int getSize(ifstream& infile);
+    
     //------------------------------- insertEdge -------------------------------
     // Insert an EdgeNode into the graph
     // Preconditions: - source and destination should be within the input range
@@ -173,16 +173,12 @@ private:
         }
     };
     
-    static const int MAX_VERTICES = 100;
     static const int MAX_CHAR_LENGTH = 50;
+    ofstream outfile;
+    int count = 0;                          // count number of motif found
+    vector<VertexNode> vertices;            // adjacency list
     
-    int size;                               // number of vertices in the graph
-    VertexNode vertices[MAX_VERTICES];      // adjacency list
     
-	
-	
-	
-	
     //------------------------ PRIVATE: copyAllVertices ------------------------
     // Copies every VertexNode element and all of its EdgeNode of othersVertices
     // over to verticies sequentially vertices will have its ownership over all
@@ -192,7 +188,7 @@ private:
     //                - otherVertices.data points to NULL or a GraphData
     // Postcondition: vertices will contains the same value and structure as
     //                otherGraph.vertices but with its ownership of all data
-    void copyAllVertices(const VertexNode *othersVertices);
+    void copyAllVertices(const vector<VertexNode> &otherVertices);
     
     //-------------------------- PRIVATE: copyAllEdge --------------------------
     // Creates a copy of every information recursively from otherEdge to
@@ -241,6 +237,9 @@ private:
     // Postconditions: true is returned if the source and destination are in the
     //                 range. Otherwise, false is returned
     bool areInRange(const int &source , const int &destination) const;
+    
+    //--------------------------- PRIVATE: isExist --------------------------
+    bool exist(const int &vertex);
     
     //------------------------ PRIVATE: extendSubgraph -------------------------
     // Recursively looking size-k subgraphs of the graph.
