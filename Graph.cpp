@@ -19,7 +19,7 @@
 //          1   2
 //          2   4       The frist number is the vertex from
 //          3   1       The second number is the vertex to
-//          0   0
+//          0   0       The last number in the file must end with 0 0 pair
 //
 //------------------------------------------------------------------------------
 
@@ -32,10 +32,7 @@
 // Postconditions: - size is initialized to zero
 //                 - Every VertexNode element in vertices will be initialized
 //                   by its default constructor
-Graph::Graph()
-{
-    size = 0;
-}
+Graph::Graph(){}
 
 
 //----------------------------- A Copy Constructor -----------------------------
@@ -49,8 +46,6 @@ Graph::Graph()
 //                   otherGraph.vertices but with its ownership of all data
 Graph::Graph(const Graph &otherGraph)
 {
-    size = otherGraph.size;
-    
     // copies adjacency list vertices
     copyAllVertices(otherGraph.vertices);
 }
@@ -64,10 +59,10 @@ Graph::Graph(const Graph &otherGraph)
 //                - otherVertices.data points to NULL or a GraphData
 // Postcondition: vertices will contains the same value and structure as
 //                otherGraph.vertices but with its ownership of all data
-void Graph::copyAllVertices(const VertexNode *otherVertices)
+void Graph::copyAllVertices(const vector<VertexNode> &otherVertices)
 {
     EdgeNode *otherEdgeHead = NULL;
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < vertices.size(); i++)
     {
         vertices[i].data = new GraphData(*otherVertices[i].data);
         
@@ -100,7 +95,7 @@ void Graph::copyAllEdge(EdgeNode *&thisEdge, EdgeNode *&otherEdge)
 //                 EdgeNode are deallocated
 Graph::~Graph()
 {
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < vertices.size(); i++)
     {
         removeAllEdge(vertices[i].edgeHead);
         delete(vertices[i].data);
@@ -130,24 +125,21 @@ void Graph::removeAllEdge(EdgeNode *&currentEdge)
 // Preconditions:  infile has been successfully opened and the file contains
 //                 properly formated data (according to the program specs)
 // Postconditions: A graph is read from infile and stored in the object
-void Graph::buildGraph(ifstream& infile, int s)
+void Graph::buildGraph(ifstream& infile)
 {
-	size = s;
-	//infile >> size;                          // data member stores array size
-    
     if (infile.eof())
         return;
     //infile.ignore();                         // throw away '\n' go to next line
-	
-//    char tempString[MAX_CHAR_LENGTH];
-//
-//    for (int v = 0; v < size; v++)
-//    {
-//        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
-//  
-//		vertices[v].data = new GraphData(tempString);
-//    }
-	
+    
+    //    char tempString[MAX_CHAR_LENGTH];
+    //
+    //    for (int v = 0; v < size; v++)
+    //    {
+    //        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
+    //
+    //		vertices[v].data = new GraphData(tempString);
+    //    }
+    
     int src = 1, dest = 1;
     for (;;) {
         infile >> src >> dest;
@@ -155,26 +147,9 @@ void Graph::buildGraph(ifstream& infile, int s)
             break;
         insertEdge(src, dest);
     }
-	
+    
 }
 
-int Graph::getSize(ifstream& infile){
-	int highest = 0;
-	int num1 = 1; int num2 = 1;
-	if(infile.eof())	return -1;
-	
-	for (;;) {
-		infile >> num1 >> num2;
-		if (num1 == 0 || infile.eof()) {
-			break;
-		}
-		if (num2 > num1) {
-			highest = (num2 > highest ? num2 : highest);
-		}else if(num1 > num2)
-			highest = (num1 > highest ? num1 : highest);
-	}
-	return highest;
-}
 
 //--------------------------------- insertEdge ---------------------------------
 // Insert an EdgeNode into the graph
@@ -186,16 +161,33 @@ int Graph::getSize(ifstream& infile){
 //                   function will end
 void Graph::insertEdge(const int &source, const int &destination)
 {
-    int vertexFrom = source - 1;
-    int vertexTo = destination - 1;
-    
-    if(vertexFrom != vertexTo && areInRange(vertexFrom, vertexTo))
+    if(source != destination && areInRange(source, destination))
     {
-        EdgeNode *tempEdge = new EdgeNode(vertexTo);
-        insertHelper(vertices[vertexFrom].edgeHead, tempEdge);
+        exist(source);
+        exist(destination);
+        
+        EdgeNode *tempEdge = new EdgeNode(destination);
+        insertHelper(vertices[source].edgeHead, tempEdge);
+        
+        tempEdge = new EdgeNode(source);
+        insertHelper(vertices[destination].edgeHead, tempEdge);
+        
         tempEdge = NULL;
     }
 }
+
+bool Graph::exist(const int &vertex){
+    if(vertex < vertices.size() && vertices[vertex].data != NULL)
+        return true;
+    
+    for(long i = vertices.size(); i <= vertex; i++)
+        vertices.push_back(*new VertexNode());
+    
+    vertices[vertex].data = new GraphData(to_string(vertex));
+    
+    return false;
+}
+
 
 //---------------------------- PRIVATE: insertHelper ---------------------------
 // Recursively looking if the edge already exist inside the list. If so, ignore
@@ -212,6 +204,8 @@ void Graph::insertHelper(EdgeNode *&current, EdgeNode *&edge)
         edge->nextEdge = current;
         current = edge;
     }
+    else if(current->adjVertex == edge->adjVertex)
+        return;
     else
         insertHelper(current->nextEdge, edge);
 }
@@ -260,13 +254,13 @@ void Graph::removeHelper(EdgeNode *&current, int destination)
 // Postconditions: all detailed path is displayed
 void Graph::displayAll() const
 {
-    cout << "Description\t\t\t\t\t";
-    cout << "From\t";
-    cout << "To\t\t";
-
-    for(int i = 0; i < size; i++)
+    cout << "From\t\t";
+    cout << "To" << endl;
+    
+    for(int i = 0; i < vertices.size(); i++)
     {
-        diplayAllHelper(i);
+        if(vertices[i].data != NULL)
+            diplayAllHelper(i);
     }
 }
 
@@ -276,16 +270,20 @@ void Graph::displayAll() const
 // Postconditions: All detailed path is displayed
 void Graph::diplayAllHelper(const int &source) const
 {
-    cout << *vertices[source].data << endl;
-
-    for(int i = 0; i < size; i++)
-    {
-        if(source != i){
-            cout << "\t\t\t\t\t\t\t";
-            cout << (source+1) << "\t\t";
-            cout << (i+1) << "\t\t";
-        }
+    cout << *vertices[source].data;
+    if(source < 1000)
+        cout << "\t";
+    cout << "\t\t";
+    
+    for(EdgeNode *v = vertices[source].edgeHead; v != NULL; v = v->nextEdge){
+        cout << v->adjVertex;
+        
+        if(v->adjVertex < 1000)
+            cout << "\t";
+        
+        cout << "\t";
     }
+    cout << endl;
 }
 
 //----------------------------------- display ----------------------------------
@@ -300,7 +298,7 @@ void Graph::display(const int &source, const int &destination) const
 {
     int vertexFrom = source - 1;
     int vertexTo = destination - 1;
-
+    
     
     if(!areInRange(vertexFrom, vertexTo))
         cout << "DISPLAY ERROR: No path exists" << endl;
@@ -318,14 +316,22 @@ void Graph::display(const int &source, const int &destination) const
 // Postcondition: The list of subgraphs are displayed
 void Graph::enumerateSubgraph(const int &k)
 {
-    for(int i = 0; i <= size; i++)
+    count = 0;
+    outfile.open("/Users/shokorakis/Desktop/Homework_3/Homework_3/output.txt");
+    if(!outfile)
+        cerr << "File could not be opend." << endl;
+    
+    for(int i = 0; i <= vertices.size(); i++)
     {
-        vector<int> Vsubgraph;
-        Vsubgraph.push_back(i);
-        list<int> Vextension = getExtension(i, Vextension);
-        
-        extendSubgraph(Vsubgraph, Vextension, i, k);
+        if(vertices[i].data != NULL){
+            vector<int> Vsubgraph;
+            Vsubgraph.push_back(i);
+            list<int> Vextension = getExtension(i, Vextension);
+            
+            extendSubgraph(Vsubgraph, Vextension, i, k);
+        }
     }
+    cout << count << endl;
 }
 
 //--------------------------- PRIVATE: extendSubgraph --------------------------
@@ -336,9 +342,13 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
 {
     if(Vsubgraph.size() == k)
     {
-        for(int i = 0; i < Vsubgraph.size(); i++)
-            cout << Vsubgraph[i] + 1 << " ";
-        cout << endl;
+        for(int i = 0; i < Vsubgraph.size(); i++){
+            outfile << Vsubgraph[i] << " ";
+        }
+    
+        count++;
+        
+        outfile << "\n";
         return;
     }
     
@@ -349,7 +359,7 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
         Vextension.pop_front();
         Vsubgraph.push_back(w);
         
-        list<int> Vextension2 = getExtension(w, Vextension);
+        list<int> Vextension2 = getExtension(v, w, Vextension);
         extendSubgraph(Vsubgraph, Vextension2, v, k);
         
         Vsubgraph.pop_back();
@@ -376,6 +386,43 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
     return newExtension;
 }
 
+list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension) const
+{
+    list<int> newExtension = Vextension;
+    
+    vector<int> neighbore = getExclusiveNeighbore(v, w);
+    for( int i = 0; i < neighbore.size(); i++)
+    {
+        if(neighbore[i] > v)
+        {
+            if(!isDuplicate(neighbore[i], newExtension))
+                newExtension.push_back(neighbore[i]);
+        }
+    }
+    
+    return newExtension;
+}
+
+vector<int> Graph::getExclusiveNeighbore(const int&v, const int&w) const{
+    vector<int> exclusiveNeighbore;
+    
+    for(EdgeNode *i = vertices[w].edgeHead; i != NULL; i = i->nextEdge)
+    {
+        bool isExclusive = true;
+        for(EdgeNode *j = vertices[v].edgeHead; j != NULL; j = j->nextEdge)
+        {
+            if( i->adjVertex == j->adjVertex ){
+                isExclusive = false;
+                break;
+            }
+        }
+    
+        if( isExclusive )
+            exclusiveNeighbore.push_back(i->adjVertex);
+    }
+    
+    return exclusiveNeighbore;
+}
 //---------------------------- PRIVATE: isDuplicate ----------------------------
 // Checks if target already exists in the Vextension
 // Preconditions: None
@@ -399,8 +446,8 @@ bool Graph::isDuplicate(const int &target, const list<int>& Vextension) const
 //                 range. Otherwise, false is returned
 bool Graph::areInRange(const int &source , const int &destination) const
 {
-    bool sourceInRange = (0 <= source) && (source < size);
-    bool destInRange = (0 <= destination) && (destination < size);
+    bool sourceInRange = (0 <= source);
+    bool destInRange = (0 <= destination);
     
     return sourceInRange && destInRange;
 }
