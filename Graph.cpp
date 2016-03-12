@@ -126,7 +126,7 @@ void Graph::removeAllEdge(EdgeNode *&currentEdge)
 //                 properly formated data (according to the program specs)
 // Postconditions: A graph is read from infile and stored in the object
 void Graph::buildGraph(ifstream& infile)
-{    
+{
     if (infile.eof())
         return;
     //infile.ignore();                         // throw away '\n' go to next line
@@ -165,7 +165,7 @@ void Graph::insertEdge(const int &source, const int &destination)
     {
         exist(source);
         exist(destination);
-    
+        
         EdgeNode *tempEdge = new EdgeNode(destination);
         insertHelper(vertices[source].edgeHead, tempEdge);
         
@@ -320,14 +320,14 @@ void Graph::enumerateSubgraph(const int &k)
     outfile.open("/Users/shokorakis/Desktop/Homework_3/Homework_3/output.txt");
     if(!outfile)
         cerr << "File could not be opend." << endl;
-        
+    
     for(int i = 0; i <= vertices.size(); i++)
     {
         if(vertices[i].data != NULL){
             vector<int> Vsubgraph;
             Vsubgraph.push_back(i);
             list<int> Vextension = getExtension(i, Vextension);
-        
+            
             extendSubgraph(Vsubgraph, Vextension, i, k);
         }
     }
@@ -345,8 +345,9 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
         for(int i = 0; i < Vsubgraph.size(); i++){
             outfile << Vsubgraph[i] << " ";
         }
-        
+    
         count++;
+        
         outfile << "\n";
         return;
     }
@@ -358,7 +359,7 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, 
         Vextension.pop_front();
         Vsubgraph.push_back(w);
         
-        list<int> Vextension2 = getExtension(w, Vextension);
+        list<int> Vextension2 = getExtension(v, w, Vextension);
         extendSubgraph(Vsubgraph, Vextension2, v, k);
         
         Vsubgraph.pop_back();
@@ -385,6 +386,43 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
     return newExtension;
 }
 
+list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension) const
+{
+    list<int> newExtension = Vextension;
+    
+    vector<int> neighbore = getExclusiveNeighbore(v, w);
+    for( int i = 0; i < neighbore.size(); i++)
+    {
+        if(neighbore[i] > v)
+        {
+            if(!isDuplicate(neighbore[i], newExtension))
+                newExtension.push_back(neighbore[i]);
+        }
+    }
+    
+    return newExtension;
+}
+
+vector<int> Graph::getExclusiveNeighbore(const int&v, const int&w) const{
+    vector<int> exclusiveNeighbore;
+    
+    for(EdgeNode *i = vertices[w].edgeHead; i != NULL; i = i->nextEdge)
+    {
+        bool isExclusive = true;
+        for(EdgeNode *j = vertices[v].edgeHead; j != NULL; j = j->nextEdge)
+        {
+            if( i->adjVertex == j->adjVertex ){
+                isExclusive = false;
+                break;
+            }
+        }
+    
+        if( isExclusive )
+            exclusiveNeighbore.push_back(i->adjVertex);
+    }
+    
+    return exclusiveNeighbore;
+}
 //---------------------------- PRIVATE: isDuplicate ----------------------------
 // Checks if target already exists in the Vextension
 // Preconditions: None

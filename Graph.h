@@ -251,7 +251,11 @@ private:
     // Create a list contain all neighbors of v
     // Precondition: None
     // Postcondition: list of v's neighbors is returned
-    list<int> getExtension(const int &v, const list<int> &Vextension) const;
+    list<int> getExtension(const int &v, const list<int>& Vextension) const;
+
+    list<int> getExtension(const int &v, const int &w, const list<int>& Vextension) const;
+    
+    vector<int> getExclusiveNeighbore(const int&v, const int&w) const;
     
     //-------------------------- PRIVATE: isDuplicate --------------------------
     // Checks if target already exists in the Vextension
