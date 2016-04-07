@@ -316,19 +316,28 @@ void Graph::display(const int &source, const int &destination) const
 // Postcondition: The list of subgraphs are displayed
 void Graph::enumerateSubgraph(const int &k)
 {
-    count = 0;
+    //output file
     outfile.open("/Users/shokorakis/Desktop/Homework_3/Homework_3/output.txt");
     if(!outfile)
         cerr << "File could not be opend." << endl;
+ 
+    count = 0;
+    vector<int> visited;
     
     for(int i = 0; i <= vertices.size(); i++)
     {
         if(vertices[i].data != NULL){
             vector<int> Vsubgraph;
             Vsubgraph.push_back(i);
+            
             list<int> Vextension = getExtension(i, Vextension);
             
-            extendSubgraph(Vsubgraph, Vextension, i, k);
+            visited.push_back(i);
+            visited.push_back(Vextension.front());
+            
+            extendSubgraph(Vsubgraph, Vextension, visited, i, k);
+            
+            visited.pop_back();
         }
     }
     cout << count << endl;
@@ -338,29 +347,36 @@ void Graph::enumerateSubgraph(const int &k)
 // Recursively looking size-k subgraphs of the graph.
 // Precondition: The graph should have already been built or exists
 // Postcondition: The list of subgraphs are displayed
-void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, const int &k)
+void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, vector<int> visited, const int &v, const int &k)
 {
+    // Display and write out the output
     if(Vsubgraph.size() == k)
     {
         for(int i = 0; i < Vsubgraph.size(); i++){
             outfile << Vsubgraph[i] << " ";
+            //cout << Vsubgraph[i] << " ";
         }
     
         count++;
         
         outfile << "\n";
+       // cout << "\n";
         return;
     }
     
     while(Vextension.size() != 0 && Vsubgraph.size() < k)
     {
         int w = Vextension.front();
-        
         Vextension.pop_front();
-        Vsubgraph.push_back(w);
         
-        list<int> Vextension2 = getExtension(v, w, Vextension);
-        extendSubgraph(Vsubgraph, Vextension2, v, k);
+        Vsubgraph.push_back(w);
+    
+        list<int> Vextension2 = getExtension(v, w, Vextension, visited);
+        
+        if( !Vextension2.empty() )
+            visited.push_back(Vextension2.front());
+        
+        extendSubgraph(Vsubgraph, Vextension2, visited, v, k);
         
         Vsubgraph.pop_back();
     }
@@ -386,11 +402,11 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
     return newExtension;
 }
 
-list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension) const
+list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension, const vector<int> &visited) const
 {
     list<int> newExtension = Vextension;
     
-    vector<int> neighbore = getExclusiveNeighbore(v, w);
+    vector<int> neighbore = getExclusiveNeighbore(visited, w);
     for( int i = 0; i < neighbore.size(); i++)
     {
         if(neighbore[i] > v)
@@ -403,26 +419,33 @@ list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vexte
     return newExtension;
 }
 
-vector<int> Graph::getExclusiveNeighbore(const int&v, const int&w) const{
+
+
+vector<int> Graph::getExclusiveNeighbore(const vector<int> &visited, const int&w) const
+{
     vector<int> exclusiveNeighbore;
     
     for(EdgeNode *i = vertices[w].edgeHead; i != NULL; i = i->nextEdge)
     {
         bool isExclusive = true;
-        for(EdgeNode *j = vertices[v].edgeHead; j != NULL; j = j->nextEdge)
+
+        for(int visitedV : visited)
         {
-            if( i->adjVertex == j->adjVertex ){
+            if( i->adjVertex == visitedV )
+            {
                 isExclusive = false;
                 break;
             }
         }
     
         if( isExclusive )
-            exclusiveNeighbore.push_back(i->adjVertex);
+                exclusiveNeighbore.push_back(i->adjVertex);
+    
     }
     
     return exclusiveNeighbore;
 }
+
 //---------------------------- PRIVATE: isDuplicate ----------------------------
 // Checks if target already exists in the Vextension
 // Preconditions: None

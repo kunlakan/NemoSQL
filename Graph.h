@@ -245,24 +245,25 @@ private:
     // Recursively looking size-k subgraphs of the graph.
     // Precondition: The graph should have already been built or exists
     // Postcondition: The list of subgraphs are displayed
-    void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, int v, const int &k);
-    
+    //void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, const int &v, const int &k);
+    void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, vector<int> visited, const int &v, const int &k);
+
     //-------------------------- PRIVATE: getExtension -------------------------
     // Create a list contain all neighbors of v
     // Precondition: None
     // Postcondition: list of v's neighbors is returned
     list<int> getExtension(const int &v, const list<int>& Vextension) const;
 
-    list<int> getExtension(const int &v, const int &w, const list<int>& Vextension) const;
+    list<int> getExtension(const int &v, const int &w, const list<int>& Vextension, const vector<int> &visited) const;
     
-    vector<int> getExclusiveNeighbore(const int&v, const int&w) const;
-    
+    vector<int> getExclusiveNeighbore(const vector<int> &visited, const int&w) const;
     //-------------------------- PRIVATE: isDuplicate --------------------------
     // Checks if target already exists in the Vextension
     // Preconditions: None
     // Postcondition: - true is return if target is contained in Vextension
     //                - false is return if target is not contained in Vextension
     bool isDuplicate(const int &target, const list<int>& Vextension) const;
+    bool isDuplicate(const int &target, const vector<int>& Vextension) const;
 };
 
 #endif /* defined(__Homework_3__Graph__) */
