@@ -322,7 +322,7 @@ void Graph::enumerateSubgraph(const int &k)
         cerr << "File could not be opend." << endl;
  
     count = 0;
-    vector<int> visited;
+    set<int> visited;
     
     for(int i = 0; i <= vertices.size(); i++)
     {
@@ -332,12 +332,12 @@ void Graph::enumerateSubgraph(const int &k)
             
             list<int> Vextension = getExtension(i, Vextension);
             
-            visited.push_back(i);
-            visited.push_back(Vextension.front());
+            visited.insert(i);
+            visited.insert(Vextension.front());
             
             extendSubgraph(Vsubgraph, Vextension, visited, i, k);
             
-            visited.pop_back();
+            visited.erase(--visited.end());
         }
     }
     cout << count << endl;
@@ -347,7 +347,7 @@ void Graph::enumerateSubgraph(const int &k)
 // Recursively looking size-k subgraphs of the graph.
 // Precondition: The graph should have already been built or exists
 // Postcondition: The list of subgraphs are displayed
-void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, vector<int> visited, const int &v, const int &k)
+void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, set<int> visited, const int &v, const int &k)
 {
     // Display and write out the output
     if(Vsubgraph.size() == k)
@@ -374,7 +374,7 @@ void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, vector<
         list<int> Vextension2 = getExtension(v, w, Vextension, visited);
         
         if( !Vextension2.empty() )
-            visited.push_back(Vextension2.front());
+            visited.insert(Vextension2.front());
         
         extendSubgraph(Vsubgraph, Vextension2, visited, v, k);
         
@@ -402,7 +402,7 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
     return newExtension;
 }
 
-list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension, const vector<int> &visited) const
+list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension, const set<int> &visited) const
 {
     list<int> newExtension = Vextension;
     
@@ -421,26 +421,14 @@ list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vexte
 
 
 
-vector<int> Graph::getExclusiveNeighbore(const vector<int> &visited, const int&w) const
+vector<int> Graph::getExclusiveNeighbore(const set<int> &visited, const int&w) const
 {
     vector<int> exclusiveNeighbore;
     
     for(EdgeNode *i = vertices[w].edgeHead; i != NULL; i = i->nextEdge)
     {
-        bool isExclusive = true;
-
-        for(int visitedV : visited)
-        {
-            if( i->adjVertex == visitedV )
-            {
-                isExclusive = false;
-                break;
-            }
-        }
-    
-        if( isExclusive )
-                exclusiveNeighbore.push_back(i->adjVertex);
-    
+        if( visited.count(i->adjVertex) == 0 )
+            exclusiveNeighbore.push_back(i->adjVertex);
     }
     
     return exclusiveNeighbore;
