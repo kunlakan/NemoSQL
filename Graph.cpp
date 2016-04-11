@@ -127,27 +127,11 @@ void Graph::removeAllEdge(EdgeNode *&currentEdge)
 // Postconditions: A graph is read from infile and stored in the object
 void Graph::buildGraph(ifstream& infile)
 {
-    if (infile.eof())
-        return;
-    //infile.ignore();                         // throw away '\n' go to next line
-    
-    //    char tempString[MAX_CHAR_LENGTH];
-    //
-    //    for (int v = 0; v < size; v++)
-    //    {
-    //        infile.getline(tempString, MAX_CHAR_LENGTH, '\n');
-    //
-    //		vertices[v].data = new GraphData(tempString);
-    //    }
-    
-    int src = 1, dest = 1;
-    for (;;) {
+    int src = -1, dest = -1;
+    while (!infile.eof()) {
         infile >> src >> dest;
-        if (src == 0 || infile.eof())
-            break;
         insertEdge(src, dest);
     }
-    
 }
 
 
@@ -319,15 +303,16 @@ void Graph::enumerateSubgraph(const int &k)
     //output file
     outfile.open("/Users/shokorakis/Desktop/Homework_3/Homework_3/output.txt");
     if(!outfile)
-        cerr << "File could not be opend." << endl;
+        cerr << "OUTPUT File could not be opend." << endl;
  
     count = 0;
-    set<int> visited;
     
     for(int i = 0; i <= vertices.size(); i++)
     {
         if(vertices[i].data != NULL){
             vector<int> Vsubgraph;
+            unordered_set<int> visited;
+
             Vsubgraph.push_back(i);
             
             list<int> Vextension = getExtension(i, Vextension);
@@ -336,8 +321,6 @@ void Graph::enumerateSubgraph(const int &k)
             visited.insert(Vextension.front());
             
             extendSubgraph(Vsubgraph, Vextension, visited, i, k);
-            
-            visited.erase(--visited.end());
         }
     }
     cout << count << endl;
@@ -347,7 +330,7 @@ void Graph::enumerateSubgraph(const int &k)
 // Recursively looking size-k subgraphs of the graph.
 // Precondition: The graph should have already been built or exists
 // Postcondition: The list of subgraphs are displayed
-void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, set<int> visited, const int &v, const int &k)
+void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k)
 {
     // Display and write out the output
     if(Vsubgraph.size() == k)
@@ -402,7 +385,7 @@ list<int> Graph::getExtension(const int &v, const list<int>& Vextension) const
     return newExtension;
 }
 
-list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension, const set<int> &visited) const
+list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vextension, const unordered_set<int> &visited) const
 {
     list<int> newExtension = Vextension;
     
@@ -421,7 +404,7 @@ list<int> Graph::getExtension(const int &v, const int &w, const list<int>& Vexte
 
 
 
-vector<int> Graph::getExclusiveNeighbore(const set<int> &visited, const int&w) const
+vector<int> Graph::getExclusiveNeighbore(const unordered_set<int> &visited, const int&w) const
 {
     vector<int> exclusiveNeighbore;
     

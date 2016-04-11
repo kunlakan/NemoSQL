@@ -30,7 +30,7 @@
 #include <fstream>
 #include <queue>
 #include <list>
-#include <set>
+#include <unordered_set>
 #include <climits>
 
 #include "GraphData.h"
@@ -247,7 +247,7 @@ private:
     // Precondition: The graph should have already been built or exists
     // Postcondition: The list of subgraphs are displayed
     //void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, const int &v, const int &k);
-    void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, set<int> visited, const int &v, const int &k);
+    void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k);
 
     //-------------------------- PRIVATE: getExtension -------------------------
     // Create a list contain all neighbors of v
@@ -255,9 +255,9 @@ private:
     // Postcondition: list of v's neighbors is returned
     list<int> getExtension(const int &v, const list<int>& Vextension) const;
 
-    list<int> getExtension(const int &v, const int &w, const list<int>& Vextension, const set<int> &visited) const;
+    list<int> getExtension(const int &v, const int &w, const list<int>& Vextension, const unordered_set<int> &visited) const;
     
-    vector<int> getExclusiveNeighbore(const set<int> &visited, const int&w) const;
+    vector<int> getExclusiveNeighbore(const unordered_set<int> &visited, const int&w) const;
     //-------------------------- PRIVATE: isDuplicate --------------------------
     // Checks if target already exists in the Vextension
     // Preconditions: None
