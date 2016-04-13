@@ -140,7 +140,7 @@ bool is_in_list(int target_num, list<int> &the_list) {
 // Recursively looking size-k subgraphs of the graph.
 // Precondition: The graph should have already been built or exists
 // Postcondition: The list of subgraphs are displayed
-void Graph::extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k)
+void Graph::extendSubgraph(vector<int> &Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k)
 {
 //    cout << "subgraph : ";
 //    for (int vert : Vsubgraph) {

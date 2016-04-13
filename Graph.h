@@ -134,7 +134,7 @@ private:
     // Precondition: The graph should have already been built or exists
     // Postcondition: The list of subgraphs are displayed
     //void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, const int &v, const int &k);
-    void extendSubgraph(vector<int> Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k);
+    void extendSubgraph(vector<int> &Vsubgraph, list<int> &Vextension, unordered_set<int> visited, const int &v, const int &k);
 
     //-------------------------- PRIVATE: getExtension -------------------------
     // Create a list contain all neighbors of v
