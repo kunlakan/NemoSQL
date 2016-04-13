@@ -121,123 +121,10 @@ public:
     
     
 private:
-    //----------------------------- EdgeNode Struct ----------------------------
-    // EdgeNode struct represents an edge connecting from one vertex to the
-    // other. There are 2 types of constructor in this struct: defualt
-    // constructor and one paremeter constructor.
-    //--------------------------------------------------------------------------
-    struct EdgeNode {
-        int adjVertex;                      // subscript of the adjacent vertex
-        EdgeNode *nextEdge;
-        
-        //------------------------ A Default Constructor -----------------------
-        // Default constructor for struct EdgeNode
-        // Preconditions: None
-        // Postconditions: nextEdge points to NULL
-        EdgeNode():
-            adjVertex(0), nextEdge(NULL){}
-        
-        //--------------------- A Two Parameters Constructor -------------------
-        // One parameter constructor for struct EdgeNode
-        // Preconditions: None
-        // Postcontitions: - adjVertex is set to vertex
-        //                 - nextEdge points to NULL
-        EdgeNode(const int &vertex):
-            adjVertex(vertex), nextEdge(NULL){}
-    };
-    
-    //----------------------------- EdgeNode Struct ----------------------------
-    // VertexNode struct represents a vertex. There is a defualt constructor.
-    //--------------------------------------------------------------------------
-    struct VertexNode {
-        EdgeNode *edgeHead;                 // head of the list of edges
-        GraphData *data;                    // store vertex data here
-        
-        //------------------------ A Default Constructor -----------------------
-        // Default constructor for struct VertexNode
-        // Preconditions: None
-        // Postconditions: edgeHead and data point to NULL
-        VertexNode():
-            edgeHead(NULL), data(NULL){}
-    };
-    
-    
-    //---------------------------- Comparator Struct ---------------------------
-    // Comparator struct uses to compare two vertices to maintain a priority in
-    // the priority queue. So, when we pop a vertex from priority queue the
-    // vertex with minimum d value is extracted.
-    //--------------------------------------------------------------------------
-    struct Comparator{
-        bool operator() (const pair<int, int> &p1, const pair<int, int> &p2)
-        {
-            return p1.second > p2.second;
-        }
-    };
-    
-    static const int MAX_CHAR_LENGTH = 50;
     ofstream outfile;
     int count = 0;                          // count number of motif found
-    vector<VertexNode> vertices;            // adjacency list
+    vector<list<int>> vertices;            // adjacency list
     
-    
-    //------------------------ PRIVATE: copyAllVertices ------------------------
-    // Copies every VertexNode element and all of its EdgeNode of othersVertices
-    // over to verticies sequentially vertices will have its ownership over all
-    // data and EdgeNode its stored.
-    // Preconditions: - size must be equal to size of otherVertices' graph
-    //                - otherVertices.edgeHead points to NULL or an EdgeNode
-    //                - otherVertices.data points to NULL or a GraphData
-    // Postcondition: vertices will contains the same value and structure as
-    //                otherGraph.vertices but with its ownership of all data
-    void copyAllVertices(const vector<VertexNode> &otherVertices);
-    
-    //-------------------------- PRIVATE: copyAllEdge --------------------------
-    // Creates a copy of every information recursively from otherEdge to
-    // thisEdge. thisEdge will have its ownership over all of its data stored.
-    // Preconditions: - otherEdge points to either NULL or an EdgeNode
-    //                - thisEdge points to either NULL or an EdgeNode
-    // Postcondition: Every thisEdge will have the same value and added order as
-    //                otherEdge
-    void copyAllEdge(EdgeNode *&thisEdge, EdgeNode *&otherEdge);
-    
-    //------------------------- PRIVATE: removeAllEdge -------------------------
-    // Removes all EdgeNode recursively
-    // Preconditions: currentEdge points to either NULL or an EdgeNode
-    // Postconditions: currentEdge->nextEdge, and currentEdge will be
-    //                 deallocated and set to NULL
-    void removeAllEdge(EdgeNode *&current);
-
-    
-    //------------------------- PRIVATE: insertHelper --------------------------
-    // Recursively looking if the edge already exist inside the list. If so,
-    // ignore the insertion. Otherwise, inserts edge at the end of the list.
-    // Preconditions: current and edge points to NULL or a first EdgeNode
-    // Postconditions: - If edge does not already exist in the list, it will be
-    //                   inserted to the end of the list
-    //                 - If edge already exist in the list, the insertion will
-    //                   be ignored
-    void insertHelper(EdgeNode *&head, EdgeNode *&edge);
-    
-    //-------------------------- PRIVATE: removeHelper -------------------------
-    // Recursively looking for the EdgeNode containing destination to remove
-    // Preconditions: current points to NULL or an EdgeNode
-    // Postconditions: If EdgeNode containing destination is found, it will be
-    //                 deallocated. Otherwise, funtions ends
-    void removeHelper(EdgeNode *&current, int destination);
-    
-    //------------------------ PRIVATE: displayAllHelper -----------------------
-    // Recursively display a all detailed path
-    // Preconditions: vertices[vertexFrom] and its data must exist
-    // Postconditions: All detailed path is displayed
-    void diplayAllHelper(const int &source) const;
-    
-    
-    //--------------------------- PRIVATE: areInRange --------------------------
-    // Checks if source and destination are in the range of 0 to size
-    // Preconditions: None
-    // Postconditions: true is returned if the source and destination are in the
-    //                 range. Otherwise, false is returned
-    bool areInRange(const int &source , const int &destination) const;
     
     //--------------------------- PRIVATE: isExist --------------------------
     bool exist(const int &vertex);
@@ -258,13 +145,6 @@ private:
     list<int> getExtension(const int &v, const int &w, const list<int>& Vextension, const unordered_set<int> &visited) const;
     
     vector<int> getExclusiveNeighbore(const unordered_set<int> &visited, const int&w) const;
-    //-------------------------- PRIVATE: isDuplicate --------------------------
-    // Checks if target already exists in the Vextension
-    // Preconditions: None
-    // Postcondition: - true is return if target is contained in Vextension
-    //                - false is return if target is not contained in Vextension
-    bool isDuplicate(const int &target, const list<int>& Vextension) const;
-    bool isDuplicate(const int &target, const vector<int>& Vextension) const;
-};
+   };
 
 #endif /* defined(__Homework_3__Graph__) */
