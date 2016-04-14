@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // main.cpp
 // Created by Clark Olson and Carol Zander
-// Modified by Kunlakan (Jeen) Cherdchusilp
+// Modified by Kunlakan (Jeen) Cherdchusilp and Jonathan Earl.
 //------------------------------------------------------------------------------
 // This is a driver for Motif Decection program
 //
@@ -25,7 +25,7 @@ using namespace std;
 // Postconditions:  - The graph of the input will be generated
 //                  - The k-size subgraphs with be generated as called
 int main() {
-    ifstream infile1("./input/Scere20141001CR_idx.txt");
+    ifstream infile1("/Users/shokorakis/Desktop/Homework_3/Homework_3/input/Ecoli20111027CR_idx.txt");
     if (!infile1) {
         cerr << "File could not be opened." << endl;
         return 1;
@@ -37,9 +37,9 @@ int main() {
     
     //G.displayAll();
     auto start = chrono::high_resolution_clock::now();
-//    G.enumerateSubgraph(3);
-    G.enumerateSubgraph(4);
-//    G.enumerateSubgraph(5);
+    //G.enumerateSubgraph(3);
+    //G.enumerateSubgraph(4);
+    G.enumerateSubgraph(5);
     
     auto end = chrono::high_resolution_clock::now();
     auto timeInSec = end - start;
