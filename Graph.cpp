@@ -105,11 +105,6 @@ void Graph::display() const
 // Postcondition: The list of subgraphs are displayed
 void Graph::enumerateSubgraph(const int &k)
 {
-    //output file
-    outfile.open("/Users/shokorakis/Desktop/Homework_3/Homework_3/output.txt");
-    if(!outfile)
-        cerr << "OUTPUT File could not be opend." << endl;
-    
     count = 0;
     
     for(int i = 0; i <= vertices.size(); i++)
@@ -150,27 +145,17 @@ void Graph::getExtension(unordered_set<int> &Vextension, const int &vertex)
 // Recursively looking size-k subgraphs of the graph.
 // Precondition: The graph should have already been built or exists
 // Postcondition: The list of subgraphs are displayed
-void Graph::extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension, unordered_set<int> visited, const int &v, const int &k)
+void Graph::extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension, unordered_set<int> &visited, const int &v, const int &k)
 {
-    
-    // Display and write out the output
     if(Vsubgraph.size() == k-1)
     {
-        string subgraph;
-        for(int v : Vsubgraph)
-        {
-            subgraph += v;
-            subgraph += " ";
-        }
-        
         for(int w : Vextension)
-        {
-            outfile << subgraph << w << "\n";
             count++;
-        }
         
         return;
     }
+    
+    list<int> unvisit;
     
     while(Vextension.size() != 0)
     {
@@ -180,9 +165,11 @@ void Graph::extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension,
         Vsubgraph.push_back(w);
         visited.insert(w);
         
+        unvisit.push_back(w);
+        
         unordered_set<int> Vextension2 = unordered_set<int>(Vextension);
         
-        for (int vertex : this->vertices[w])
+        for (int vertex : vertices[w])
         {
             if (vertex > v && visited.count(vertex) == 0 && Vextension.count(vertex) == 0)
                 Vextension2.insert(vertex);
@@ -191,4 +178,8 @@ void Graph::extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension,
         extendSubgraph(Vsubgraph, Vextension2, visited, v, k);
         Vsubgraph.pop_back();
     }
+
+    for(int i : unvisit)
+        visited.erase(i);
+
 }

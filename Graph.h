@@ -69,7 +69,6 @@ public:
     
     
 private:
-    ofstream outfile;
     int count = 0;                          // count number of motif found
     vector<unordered_set<int>> vertices;            // adjacency list
     
@@ -85,7 +84,7 @@ private:
     // Recursively looking size-k subgraphs of the graph.
     // Precondition: The graph should have already been built or exists
     // Postcondition: The list of subgraphs are displayed
-    void extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension, unordered_set<int> visited, const int &v, const int &k);
+    void extendSubgraph(list<int> &Vsubgraph, unordered_set<int> &Vextension, unordered_set<int> &visited, const int &v, const int &k);
     
     //-------------------------- PRIVATE: getExtension -------------------------
     // Add all neighbors of vertex to Vextension
