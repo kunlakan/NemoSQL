@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // main.cpp
 // Created by Clark Olson and Carol Zander
-// Modified by Kunlakan (Jeen) Cherdchusilp
+// Modified by Kunlakan (Jeen) Cherdchusilp and Jonathan Earl.
 //------------------------------------------------------------------------------
 // This is a driver for Motif Decection program
 //
@@ -30,25 +30,22 @@ int main() {
         cerr << "File could not be opened." << endl;
         return 1;
     }
-
-    for(;;){
-        Graph G;
-        G.buildGraph(infile1);
-        if (infile1.eof())
-            break;
-        
-        //G.displayAll();
-        auto start = chrono::high_resolution_clock::now();
-        G.enumerateSubgraph(3);
-        //G.enumerateSubgraph(4);
-        //G.enumerateSubgraph(5);
-        
-        auto end = chrono::high_resolution_clock::now();
-        auto timeInSec = end - start;
-        cout << "Run Time = " << chrono::duration_cast<chrono::milliseconds>(timeInSec).count();
-        
-        cout << endl;
-    }
+    
+    Graph G;
+    G.buildGraph(infile1);
+    //infile1.close();
+    
+    //G.displayAll();
+    auto start = chrono::high_resolution_clock::now();
+    //G.enumerateSubgraph(3);
+    //G.enumerateSubgraph(4);
+    G.enumerateSubgraph(5);
+    
+    auto end = chrono::high_resolution_clock::now();
+    auto timeInSec = end - start;
+    cout << "Run Time = " << chrono::duration_cast<chrono::milliseconds>(timeInSec).count();
+    
+    cout << endl;
     
     return 0;
 }
